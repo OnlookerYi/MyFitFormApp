@@ -1,0 +1,23 @@
+# Python
+__pycache__/
+*.pyc 
+venv/
+env/
+*.env
+
+#Flutter/Dart
+build/
+.dart_tool
+.packages
+.fvm
+
+# VS Code
+.vscode
+!.vscode/setting.json
+!.vscode/tasks.json
+!.vscode/launch/json
+!.vscode/extensions.json
+
+#OS
+.DS_Store
+Thumbs.db
