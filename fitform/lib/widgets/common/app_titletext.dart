@@ -1,46 +1,65 @@
 import 'package:flutter/material.dart';
 
+enum TitleTextStyle {
+  display,
+  headline,
+  titleLarge,
+  titleMedium,
+  titleSmall,
+  bodyLarge,
+  bodyMedium,
+  bodySmall,
+}
+
 class TitleText extends StatelessWidget {
   final String text;
-  final double size;
-  final FontWeight weight;
-  final Color color;
-  final TextAlign align;
-  final double height;
-  final double letterSpacing;
-  final String? fontFamily; // ✅ 字体样式
+  final TitleTextStyle style;
+  final TextAlign textAlign;
   final int? maxLines;
   final TextOverflow overflow;
 
   const TitleText(
     this.text, {
     super.key,
-    this.size = 20,
-    this.weight = FontWeight.bold,
-    this.color = Colors.black,
-    this.align = TextAlign.start,
-    this.height = 1.4,
-    this.letterSpacing = 0,
-    this.fontFamily,
+    this.style = TitleTextStyle.titleMedium,
+    this.textAlign = TextAlign.start,
     this.maxLines,
     this.overflow = TextOverflow.ellipsis,
   });
 
   @override
   Widget build(BuildContext context) {
+    final textStyle = _getTextStyle(context);
+
     return Text(
       text,
-      textAlign: align,
+      textAlign: textAlign,
       maxLines: maxLines,
       overflow: overflow,
-      style: TextStyle(
-        fontSize: size,
-        fontWeight: weight,
-        color: color,
-        height: height,
-        letterSpacing: letterSpacing,
-        fontFamily: fontFamily, // ✅ 应用字体
-      ),
+      style: textStyle,
     );
+  }
+
+  TextStyle _getTextStyle(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+
+    switch (style) {
+      case TitleTextStyle.display:
+        return textTheme.displayLarge!;
+      case TitleTextStyle.headline:
+        return textTheme.headlineLarge!;
+      case TitleTextStyle.titleLarge:
+        return textTheme.titleLarge!;
+      case TitleTextStyle.titleMedium:
+        return textTheme.titleMedium!;
+      case TitleTextStyle.titleSmall:
+        return textTheme.titleSmall!;
+      case TitleTextStyle.bodyLarge:
+        return textTheme.bodyLarge!;
+      case TitleTextStyle.bodyMedium:
+        return textTheme.bodyMedium!;
+      case TitleTextStyle.bodySmall:
+        return textTheme.bodySmall!;
+    }
   }
 }

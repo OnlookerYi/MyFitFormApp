@@ -1,9 +1,13 @@
+import 'package:fitform/widgets/common/app_titletext.dart';
+import 'package:fitform/widgets/common/app_textfield.dart';
+import 'package:fitform/widgets/common/app_button.dart';
 import 'package:flutter/material.dart';
 import '../main/main_screen.dart';
 import 'register_screen.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
+
 
   @override
   Widget build(BuildContext context) {
@@ -16,73 +20,51 @@ class LoginPage extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.all(24),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               const SizedBox(height: 40),
-              const Center(
-                child: Text(
-                  "Welcome to FitForm",
-                  style: TextStyle(
-                    fontSize: 32,
-                    fontWeight: FontWeight.bold,
-                    color:Colors.black,
-                  ),
-                )
-              ),
-              const SizedBox(height: 8),
-              const Text(
-                '请输入账号和密码',
-                style: TextStyle(color: Colors.grey),
-              ),
-              const SizedBox(height: 40),
-
-              /// 用户名
-              TextField(
-                controller: usernameCtrl,
-                decoration: InputDecoration(
-                  labelText: '用户名',
-                  prefixIcon: const Icon(Icons.person),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
+              Align(
+                alignment: Alignment.center,
+                child: TitleText(
+                  'Welcome to Fitform',
+                  style: TitleTextStyle.titleLarge,
                 ),
+              ),
+              const SizedBox(height: 60),
+              
+              const SizedBox(height: 10),
+
+              TitleText(
+                '请输入账号和密码',
+                style: TitleTextStyle.titleMedium,
+              ),
+              /// 用户名
+              AppTextField(
+                label: '用户名',
+                controller: usernameCtrl,
+                maxLength: 12,
               ),
               const SizedBox(height: 20),
 
               /// 密码
-              TextField(
+              AppTextField(
+                label: '密码',
                 controller: passwordCtrl,
                 obscureText: true,
-                decoration: InputDecoration(
-                  labelText: '密码',
-                  prefixIcon: const Icon(Icons.lock),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
+                maxLength: 16,
               ),
               const SizedBox(height: 30),
 
               /// 登录按钮
-              SizedBox(
-                width: double.infinity,
-                height: 50,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+              PrimaryButton(
+                text: '登录',
+                onPressed: () {
+                  Navigator.of(context, rootNavigator: true).push(
+                    MaterialPageRoute(
+                      builder: (_) => MainPage(),
                     ),
-                  ),
-                  onPressed: () {
-                    // TODO: 登录逻辑
-                    print('登录：${usernameCtrl.text}');
-                  },
-                  child: const Text(
-                    '登录',
-                    style: TextStyle(fontSize: 18),
-                  ),
-                ),
+                  );
+                },
               ),
 
               const Spacer(),
@@ -94,8 +76,7 @@ class LoginPage extends StatelessWidget {
                   const Text('没有账号？'),
                   TextButton(
                     onPressed: () {
-                      Navigator.push(
-                        context,
+                      Navigator.of(context, rootNavigator: true).pushReplacement(
                         MaterialPageRoute(
                           builder: (_) => const RegisterPage(),
                         ),
