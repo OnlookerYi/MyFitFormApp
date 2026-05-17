@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:fitform/widgets/common/app_titletext.dart';
 import 'package:fitform/screens/auth/login_screen.dart';
@@ -132,13 +134,19 @@ class _StatItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
+    final size = MediaQuery.of(context).size;
+    final diagonal = sqrt(size.width * size.width + size.height * size.height);
+
+
     return Column(
       children: [
-        Text(value, style: TextStyle(fontSize:28, fontWeight: FontWeight.w700)),
-        const SizedBox(height: 4),
+        Text(value, style: TextStyle(fontSize: diagonal * 0.03 , fontWeight: FontWeight.w700)),
+        SizedBox(height: diagonal * 0.01),
         Text(
           label, 
-          style: Theme.of(context).textTheme.titleMedium
+          style: TextStyle(
+            fontSize: diagonal * 0.02, fontWeight: FontWeight.w500
+          )
         ),
       ],
     );
@@ -150,6 +158,8 @@ class _MenuSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+
     return Column(
       children: [
         _MenuItem(icon: Icons.fitness_center, title: '我的计划'),
@@ -177,9 +187,13 @@ class _MenuItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    final size = MediaQuery.of(context).size;
+    final diagonal = sqrt(size.width * size.width + size.height * size.height);
+
     return ListTile(
       leading: Icon(icon, color: Colors.blue),
-      title: Text(title, style: Theme.of(context).textTheme.titleMedium,),
+      title: Text(title, style: TextStyle(fontSize: diagonal * 0.02, fontWeight: FontWeight.w400)),
       trailing: const Icon(Icons.chevron_right),
       onTap: () {},
     );
