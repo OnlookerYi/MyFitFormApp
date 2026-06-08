@@ -4,10 +4,19 @@ class User {
   final String? nickname;
   final String? avatar;
   final String? bio;
-  final String gender;      // ✅ 补回
+  final String? gender;
 
-  final bool isExpert;      // 是否是达人
-  final int points;         // 积分
+  final int points;
+  final int workouts;
+  final int streak;
+  final DateTime? lastWorkoutAt;
+  final bool isExpert;
+
+  /// ✅ 社区统计
+  final int postCount;
+  final int followerCount;
+  final int followingCount;
+  final int likeCount;
 
   User({
     required this.id,
@@ -15,33 +24,60 @@ class User {
     this.nickname,
     this.avatar,
     this.bio,
-    this.gender = 'unknown', // ✅ 默认值
-    this.isExpert = false,
+    this.gender,
     this.points = 0,
+    this.workouts = 0,
+    this.streak = 0,
+    this.lastWorkoutAt,
+    this.isExpert = false,
+    this.postCount = 0,
+    this.followerCount = 0,
+    this.followingCount = 0,
+    this.likeCount = 0,
   });
+
+  factory User.empty() => User(
+        id: 0,
+        username: '',
+        nickname: '',
+        avatar: '',
+        bio: '',
+        gender: '男',
+        postCount: 0,
+        followerCount: 0,
+        followingCount: 0,
+        likeCount: 0,
+        points: 0,
+        workouts: 0,
+      );
 
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
       id: json['id'],
-      username: json['username'] ?? '',
-      nickname: json['nickname']?.toString().isNotEmpty == true
-          ? json['nickname']
-          : json['username'] ?? '未知用户',
+      username: json['username'],
+      nickname: json['nickname'],
       avatar: json['avatar'],
       bio: json['bio'],
-      gender: json['gender'] ?? 'unknown',
-      isExpert: json['is_expert'] == 1 || json['is_expert'] == true,
+      gender: json['gender'],
       points: json['points'] ?? 0,
+      workouts: json['workouts'] ?? 0,
+      streak: json['streak'] ?? 0,
+      lastWorkoutAt: json['last_workout_at'] != null
+          ? DateTime.parse(json['last_workout_at'])
+          : null,
+      isExpert: json['is_expert'] == 1,
+      postCount: json['post_count'] ?? 0,
+      followerCount: json['follower_count'] ?? 0,
+      followingCount: json['following_count'] ?? 0,
+      likeCount: json['like_count'] ?? 0,
     );
   }
-  Map<String, dynamic> toJson() => {
-        'id': id,
-        'username': username,
-        'nickname': nickname,
-        'avatar': avatar,
-        'bio': bio,
-        'gender': gender,
-        'is_expert': isExpert,
-        'points': points,
-      };
+
+  int get level {
+    if (points >= 5000) return 5;
+    if (points >= 3000) return 4;
+    if (points >= 1500) return 3;
+    if (points >= 500) return 2;
+    return 1;
+  }
 }

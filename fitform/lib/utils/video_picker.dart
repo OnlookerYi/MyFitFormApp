@@ -1,12 +1,23 @@
-import 'package:file_picker/file_picker.dart';
-import '../models/video_source.dart';
 
-Future<VideoSource?> pickLocalVideo() async {
-  final result = await FilePicker.platform.pickFiles(
-    type: FileType.video,
-  );
+import 'package:image_picker/image_picker.dart';
+import 'package:fitform/models/video_source.dart';
 
-  if (result == null || result.files.isEmpty) return null;
+class VideoPicker {
+  static final ImagePicker _picker = ImagePicker();
 
-  return VideoSource.file(result.files.single.path!);
+  /// 从相册选择视频
+  static Future<VideoSource?> pickFromGallery() async {
+    final XFile? file =
+        await _picker.pickVideo(source: ImageSource.gallery);
+    if (file == null) return null;
+    return VideoSource(file.path, VideoSourceType.file);
+  }
+
+  /// 从相机录制视频
+  static Future<VideoSource?> recordFromCamera() async {
+    final XFile? file =
+        await _picker.pickVideo(source: ImageSource.camera);
+    if (file == null) return null;
+    return VideoSource(file.path, VideoSourceType.file);
+  }
 }

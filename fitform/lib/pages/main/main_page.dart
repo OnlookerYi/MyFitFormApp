@@ -7,6 +7,12 @@ import '../profile/profile_page.dart';
 final GlobalKey<HomePageState> homePageKey =
     GlobalKey<HomePageState>();
 
+final GlobalKey<ProfilePageState> profileKey =
+    GlobalKey<ProfilePageState>();
+
+final GlobalKey<CommunityPageState> communityKey =
+    GlobalKey<CommunityPageState>();
+
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
 
@@ -20,8 +26,8 @@ class _MainPageState extends State<MainPage> {
   final List<Widget> _pages = [
     HomePage(key: homePageKey),
     const AnalysisCenterPage(),
-    const CommunityPage(),
-    const ProfilePage(),
+    CommunityPage(key: communityKey),
+    ProfilePage(key: profileKey),
   ];
 
   void _onTabTap(int index) {
@@ -33,6 +39,13 @@ class _MainPageState extends State<MainPage> {
     if (index == 0) {
       homePageKey.currentState?.updateQuote();
     }
+    if(index == 2) {
+      communityKey.currentState?.refresh();
+    }
+    if (index == 3) {
+      profileKey.currentState?.reload();
+    }
+    
   }
 
   @override

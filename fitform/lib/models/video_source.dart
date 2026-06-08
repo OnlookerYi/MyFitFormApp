@@ -1,28 +1,8 @@
-enum VideoSourceType {
-  network,
-  file,
-  asset,
-  camera,
-}
+enum VideoSourceType { camera, file, network, asset }
 
 class VideoSource {
-  final VideoSourceType type;
   final String path;
+  final VideoSourceType type;
 
-  const VideoSource({
-    required this.type,
-    required this.path,
-  });
-
-  factory VideoSource.network(String url) =>
-      VideoSource(type: VideoSourceType.network, path: url);
-
-  factory VideoSource.file(String filePath) =>
-      VideoSource(type: VideoSourceType.file, path: filePath);
-
-  factory VideoSource.asset(String assetPath) =>
-      VideoSource(type: VideoSourceType.asset, path: assetPath);
-
-  factory VideoSource.camera() =>
-      const VideoSource(type: VideoSourceType.camera, path: '');
+  const VideoSource(this.path, this.type); // ✅ 关键
 }

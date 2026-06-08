@@ -1,38 +1,36 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
-import 'edit_profile_page.dart';
-import 'package:fitform/pages/main/splash_page.dart';
-import 'package:fitform/models/user.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:fitform/services/user_service.dart';
 
+import 'package:fitform/pages/community/other_user_profile_page.dart';
+import 'package:fitform/models/user.dart';
+import 'package:fitform/services/user_service.dart';
+import 'package:fitform/pages/main/splash_page.dart';
+import 'about_page.dart';
+import 'edit_profile_page.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
 
   @override
-  State<ProfilePage> createState() => _ProfilePageState();
+  State<ProfilePage> createState() => ProfilePageState();
 }
 
-class _ProfilePageState extends State<ProfilePage> {
+class ProfilePageState extends State<ProfilePage> {
   User? currentUser;
   bool loading = true;
 
-  @override
-  void initState() {
-    super.initState();
-    _loadUser();
+  Future<void> reload() async {
+    await _loadUser();
   }
 
   Future<void> _loadUser() async {
     try {
       final prefs = await SharedPreferences.getInstance();
       final userId = prefs.getInt('userId');
-
       if (userId == null) throw Exception('未登录');
 
       final user = await UserService.getProfile(userId);
-
       if (mounted) {
         setState(() {
           currentUser = user;
@@ -42,6 +40,24 @@ class _ProfilePageState extends State<ProfilePage> {
     } catch (e) {
       if (mounted) setState(() => loading = false);
     }
+  }
+
+  Future<void> _logout() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.clear();
+
+    if (!mounted) return;
+
+    Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
+      MaterialPageRoute(builder: (_) => const SplashPage()),
+      (route) => false,
+    );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUser();
   }
 
   @override
@@ -61,66 +77,56 @@ class _ProfilePageState extends State<ProfilePage> {
     return Scaffold(
       backgroundColor: const Color(0xFFF7F8FA),
       appBar: AppBar(
-        title: const Text('个人中心'),
+        title: const Text(
+          '个人中心',
+          style: TextStyle(
+            fontWeight: FontWeight.w600,
+            fontSize: 24,
+          ),
+        ),
         backgroundColor: Colors.greenAccent,
         foregroundColor: Colors.black,
         centerTitle: true,
       ),
       body: ListView(
         children: [
-          _UserInfoSection(user: currentUser!),
+          _UserInfoSection(
+            user: currentUser!,
+            onUpdated: _loadUser,
+          ),
           const SizedBox(height: 12),
           _StatsSection(user: currentUser!),
           const SizedBox(height: 12),
-          const _MenuSection(),
+          _PointsCard(user: currentUser!),
+          const SizedBox(height: 12),
+          _MenuSection(
+            currentUser: currentUser!,
+            onUpdated: _loadUser,
+          ),
           const SizedBox(height: 24),
-          const _LogoutButton(),
+          _LogoutButton(onLogout: _logout),
         ],
       ),
     );
   }
 }
 
-
-class _LogoutButton extends StatelessWidget {
-  const _LogoutButton();
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24),
-      child: ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.red,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-        ),
-        onPressed: () {
-          Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
-            MaterialPageRoute(builder: (_) => const SplashPage()),
-            (route) => false,
-          );
-        },
-        child: Text(
-          '退出登录',
-          style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Colors.amber)
-        ),
-      ),
-    );
-  }
-}
+/* ===================== 用户信息 ===================== */
 
 class _UserInfoSection extends StatelessWidget {
   final User user;
+  final VoidCallback onUpdated;
 
-  const _UserInfoSection({required this.user});
+  const _UserInfoSection({
+    required this.user,
+    required this.onUpdated,
+  });
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () async {
-        final result = await Navigator.push(
+        await Navigator.push(
           context,
           MaterialPageRoute(
             builder: (_) => EditProfilePage(
@@ -131,51 +137,64 @@ class _UserInfoSection extends StatelessWidget {
             ),
           ),
         );
-
-        if (result != null) {
-          // ✅ 回写后刷新
-          // 你可以在这里重新 _loadUser()
-        }
+        onUpdated();
       },
-      child: Row(
-        children: [
-          CircleAvatar(
-            radius: 36,
-            backgroundImage: (user.avatar != null &&
-                    user.avatar!.startsWith('http'))
-                ? NetworkImage(user.avatar!)
-                : null,
-            child: (user.avatar == null || user.avatar!.isEmpty)
-                ? Text(
-                    (user.nickname?.isNotEmpty == true)
-                        ? user.nickname![0]
-                        : user.username[0],
-                  )
-                : null,
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  user.nickname ?? user.username,
-                  style: const TextStyle(
-                      fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  user.bio ?? '这个人很懒，什么都没写～',
-                  style: const TextStyle(color: Colors.grey),
-                ),
-              ],
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Row(
+          children: [
+            CircleAvatar(
+              radius: 36,
+              backgroundImage: (user.avatar != null &&
+                      user.avatar!.startsWith('http'))
+                  ? NetworkImage(user.avatar!)
+                  : null,
+              child: (user.avatar == null || user.avatar!.isEmpty)
+                  ? Text(
+                      (user.nickname?.isNotEmpty == true)
+                          ? user.nickname![0]
+                          : user.username[0],
+                      style: const TextStyle(fontSize: 24),
+                    )
+                  : null,
             ),
-          )
-        ],
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    user.nickname ?? user.username,
+                    style: const TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Text(
+                    '用户名: ${user.username}',
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    user.bio?.isNotEmpty == true
+                        ? user.bio!
+                        : '暂无简介，去完善一下吧～',
+                    style: const TextStyle(color: Colors.grey),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 }
+
+/* ===================== 运动数据 ===================== */
 
 class _StatsSection extends StatelessWidget {
   final User user;
@@ -190,10 +209,10 @@ class _StatsSection extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          _StatItem(label: '帖子', value: '2'),
-          _StatItem(label: '粉丝', value: '0'),
-          _StatItem(label: '关注', value: '2'),
-          _StatItem(label: '获赞', value: '6'),
+          _StatItem(label: '帖子', value: '${user.postCount}'),
+          _StatItem(label: '粉丝', value: '${user.followerCount}'),
+          _StatItem(label: '关注', value: '${user.followingCount}'),
+          _StatItem(label: '获赞', value: '${user.likeCount}'),
         ],
       ),
     );
@@ -208,47 +227,139 @@ class _StatItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     final size = MediaQuery.of(context).size;
-    final diagonal = sqrt(size.width * size.width + size.height * size.height);
-
+    final diagonal =
+        sqrt(size.width * size.width + size.height * size.height);
 
     return Column(
       children: [
-        Text(value, style: TextStyle(fontSize: diagonal * 0.03 , fontWeight: FontWeight.w700)),
+        Text(
+          value,
+          style: TextStyle(
+            fontSize: diagonal * 0.03,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
         SizedBox(height: diagonal * 0.01),
         Text(
-          label, 
+          label,
           style: TextStyle(
-            fontSize: diagonal * 0.02, fontWeight: FontWeight.w500
-          )
+            fontSize: diagonal * 0.02,
+            fontWeight: FontWeight.w500,
+          ),
         ),
       ],
     );
   }
 }
 
-class _MenuSection extends StatelessWidget {
-  const _MenuSection();
+/* ===================== 积分进度 ===================== */
+
+class _PointsCard extends StatelessWidget {
+  final User user;
+
+  const _PointsCard({required this.user});
 
   @override
   Widget build(BuildContext context) {
+    final nextLevelNeed = 500 - (user.points % 500);
 
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 12),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        children: [
+          const Text('总积分', style: TextStyle(color: Colors.grey)),
+          const SizedBox(height: 8),
+          Text(
+            '${user.points}',
+            style: const TextStyle(
+              fontSize: 32,
+              fontWeight: FontWeight.bold,
+              color: Colors.green,
+            ),
+          ),
+          const SizedBox(height: 8),
+          LinearProgressIndicator(
+            value: (user.points % 500) / 500,
+            backgroundColor: Colors.grey.shade200,
+            color: Colors.green,
+          ),
+          const SizedBox(height: 4),
+          Text(
+            '距离 Lv.${user.level + 1} 还需 $nextLevelNeed 积分',
+            style: const TextStyle(fontSize: 12, color: Colors.grey),
+          ),
+        ],
+      ),
+    );
+  }
+}
 
+/* ===================== 菜单 ===================== */
+
+class _MenuSection extends StatelessWidget {
+  final User currentUser;
+  final VoidCallback onUpdated;
+
+  const _MenuSection({
+    required this.currentUser,
+    required this.onUpdated,
+  });
+
+  @override
+  Widget build(BuildContext context) {
     return Column(
       children: [
-        _MenuItem(icon: Icons.fitness_center, title: '我的计划'),
         const SizedBox(height: 5),
-        _MenuItem(icon: Icons.emoji_events, title: '我的成就'),
+        _MenuItem(
+          icon: Icons.emoji_events,
+          title: '我的帖子',
+          onTap: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (_) => OtherUserProfilePage(currentUser.id),
+              ),
+            );
+          },
+        ),
         const SizedBox(height: 5),
         _MenuItem(icon: Icons.bookmark_border, title: '我的收藏'),
         const SizedBox(height: 5),
-        _MenuItem(icon: Icons.abc_outlined, title: '达人认证'),
+        _MenuItem(icon: Icons.verified_outlined, title: '达人认证'),
         const SizedBox(height: 5),
-        _MenuItem(icon: Icons.settings, title: '设置'),
+        _MenuItem(
+          icon: Icons.settings_outlined,
+          title: '设置',
+          onTap: () async {
+            await Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => EditProfilePage(
+                  avatarUrl: currentUser.avatar ?? '',
+                  nickname: currentUser.nickname ?? '',
+                  bio: currentUser.bio ?? '',
+                  gender: currentUser.gender,
+                ),
+              ),
+            );
+            onUpdated();
+          },
+        ),
         const SizedBox(height: 5),
-        _MenuItem(icon: Icons.info_outline, title: '关于我们'),
-        const SizedBox(height: 5),
+        _MenuItem(
+          icon: Icons.info_outline,
+          title: '关于我们',
+          onTap: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(builder: (_) => const AboutPage()),
+            );
+          },
+        ),
       ],
     );
   }
@@ -257,22 +368,62 @@ class _MenuSection extends StatelessWidget {
 class _MenuItem extends StatelessWidget {
   final IconData icon;
   final String title;
+  final VoidCallback? onTap;
 
-  const _MenuItem({required this.icon, required this.title});
+  const _MenuItem({
+    required this.icon,
+    required this.title,
+    this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
-
     final size = MediaQuery.of(context).size;
-    final diagonal = sqrt(size.width * size.width + size.height * size.height);
+    final diagonal =
+        sqrt(size.width * size.width + size.height * size.height);
 
     return ListTile(
       leading: Icon(icon, color: Colors.blue),
-      title: Text(title, style: TextStyle(fontSize: diagonal * 0.02, fontWeight: FontWeight.w400)),
+      title: Text(
+        title,
+        style: TextStyle(
+          fontSize: diagonal * 0.02,
+          fontWeight: FontWeight.w400,
+        ),
+      ),
       trailing: const Icon(Icons.chevron_right),
-      onTap: () {},
+      onTap: onTap,
     );
   }
 }
 
+/* ===================== 退出登录 ===================== */
 
+class _LogoutButton extends StatelessWidget {
+  final VoidCallback onLogout;
+
+  const _LogoutButton({required this.onLogout});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24),
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.red,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+        onPressed: onLogout,
+        child: Text(
+          '退出登录',
+          style: Theme.of(context)
+              .textTheme
+              .titleMedium
+              ?.copyWith(color: Colors.amber),
+        ),
+      ),
+    );
+  }
+}

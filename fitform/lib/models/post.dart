@@ -36,6 +36,7 @@ class Post {
   });
 
   factory Post.fromJson(Map<String, dynamic> json) {
+    print('🧩 Post.fromJson author_id = ${json['author_id']}');
     List<String> parseImages(dynamic images) {
       if (images == null) return [];
       if (images is List) return List<String>.from(images);
@@ -56,12 +57,12 @@ class Post {
       type: _parseType(json['type']),
       images: parseImages(json['images']),
       videoUrl: json['video_url'] ?? json['url'],
-      analysisId: json['analysis_id'],
+      analysisId: json['analysis_id'] == null ? null : json['analysis_id'] as int?,
       likeCount: json['like_count'] ?? 0,
       commentCount: json['comment_count'] ?? 0,
       collectCount: json['collect_count'] ?? 0,
-      liked: false,
-      collected: false,
+      liked: json['liked'] == 1 || json['liked'] == true,
+      collected: json['collected'] == 1 || json['collected'] == true,
       createdAt: json['created_at'] ?? '',
     );
   }

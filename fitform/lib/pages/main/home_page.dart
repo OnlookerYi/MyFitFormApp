@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:fitform/models/user.dart';
 import 'package:fitform/services/quote_service.dart';
 import 'package:fitform/services/user_service.dart';
+import 'package:fitform/services/home_status_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:fitform/utils/app_colors.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -13,8 +15,10 @@ class HomePage extends StatefulWidget {
 }
 
 class HomePageState extends State<HomePage> {
+  Color quoteColor = Colors.lightBlueAccent;
   String quote = '';
   User? currentUser;
+  HomeStatus? status;   // ✅ 新增
   bool loading = true;
 
   @override
@@ -22,174 +26,155 @@ class HomePageState extends State<HomePage> {
     super.initState();
     _loadData();
   }
-
+  
 
   Future<void> _loadData() async {
-    // ✅ 你的本地语录服务（不动）
     await QuoteService.loadQuotes();
 
-    // ✅ 只新增：从后端拿当前用户
     final prefs = await SharedPreferences.getInstance();
     final userId = prefs.getInt('userId');
+    if (userId == null) return;
 
-    final user = await UserService.getProfile(userId!); // 暂写死 userId
+    final user = await UserService.getProfile(userId);
+    final st = await HomeStatusService.getStatus(userId);
 
     if (mounted) {
       setState(() {
         currentUser = user;
-        quote = QuoteService.randomQuote(); // ✅ 保留原逻辑
+        status = st;
         loading = false;
       });
     }
   }
 
+  /// ✅ 不改动 quote 服务
   void updateQuote() {
     setState(() {
+      _loadData();
       quote = QuoteService.randomQuote();
+      quoteColor = AppColors.quoteColors[
+        DateTime.now().millisecondsSinceEpoch % AppColors.quoteColors.length
+      ];
     });
+  }
+
+  String _greeting() {
+    final h = DateTime.now().hour;
+    if (h < 11) return '早上好';
+    if (h < 17) return '下午好';
+    return '晚上好';
   }
 
   @override
   Widget build(BuildContext context) {
-    if (loading) {
+    if (loading || currentUser == null || status == null) {
       return const Scaffold(
         body: Center(child: CircularProgressIndicator()),
       );
     }
 
+    final size = MediaQuery.of(context).size;
+    final diagonal =
+        sqrt(size.width * size.width + size.height * size.height);
+
     return Scaffold(
-      appBar: AppBar(title: const Text('FitForm')),
+      appBar: AppBar(
+        title: Text(
+                'FitForm',
+                style: TextStyle(         // ✅ 颜色
+                  fontWeight: FontWeight.w600, // ✅ 粗细
+                  fontSize: 26,                // ✅ 字号（可选）
+                ),
+              ),
+        centerTitle: true,
+        backgroundColor: const Color(0xF0FFFF07),
+        ),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          _Greeting(quote: quote, nickname: currentUser!.nickname ?? ''),
+          /// ✅ 问候
+          Text(
+            '${_greeting()}, ${currentUser!.nickname} 👋',
+            style: TextStyle(
+              fontSize: diagonal * 0.03,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+
+          const SizedBox(height: 16),
+
+          /// ✅ 语录卡片（不动 quote 逻辑）
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.lightBlueAccent.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
+                color: Colors.lightBlueAccent.withOpacity(0.2),
+              ),
+            ),
+            child: Text(
+              '"$quote"',
+              style: TextStyle(
+                fontSize: diagonal * 0.02,
+                fontStyle: FontStyle.italic,
+                color: quoteColor,
+                height: 1.5,
+              ),
+            ),
+          ),
+
           const SizedBox(height: 20),
-          _TodayWorkoutCard(),
-          const SizedBox(height: 20),
-          _WeeklyStats(),
+
+          /// ✅ 今日状态（真实数据）
+          Card(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Row(
+                children: [
+                  Icon(
+                    status!.checkedIn
+                        ? Icons.check_circle
+                        : Icons.directions_run,
+                    color: status!.checkedIn ? Colors.green : Colors.orange,
+                    size: 32,
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          '连续打卡 ${status!.streak} 天',
+                          style: const TextStyle(
+                              fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          status!.checkedIn
+                              ? '今日已完成 ${status!.duration} 分钟运动 💪'
+                              : '还没记录运动，今天准备练什么？',
+                          style: const TextStyle(color: Colors.grey),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
         ],
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: updateQuote,
-        child: const Icon(Icons.refresh),
+        backgroundColor: Colors.lightBlueAccent,
+        tooltip: '换一句鼓励',
+        child: const Icon(Icons.autorenew),
       ),
-    );
-  }
-}
-
-class _Greeting extends StatelessWidget {
-  final String quote;
-  final String nickname;
-
-  const _Greeting({required this.quote, required this.nickname});
-
-  @override
-  Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
-    final diagonal = sqrt(size.width * size.width + size.height * size.height);
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          '你好，$nickname 👋',
-          style: TextStyle(
-            fontSize: diagonal * 0.03,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        const SizedBox(height: 6),
-        Text(
-          quote,
-          style: TextStyle(
-            fontSize: diagonal * 0.02,
-            color: Colors.lightBlueAccent,
-            fontStyle: FontStyle.italic,
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _TodayWorkoutCard extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
-      elevation: 4,
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              '今日推荐训练',
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 8),
-            const Text(
-              '胸部训练 · 45 分钟',
-              style: TextStyle(fontSize: 18),
-            ),
-            const SizedBox(height: 4),
-            const Text(
-              '卧推 · 夹胸 · 俯卧撑',
-              style: TextStyle(color: Colors.grey),
-            ),
-            const SizedBox(height: 16),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () {
-                  // TODO: 开始训练
-                },
-                child: const Text('开始训练'),
-              ),
-            )
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _WeeklyStats extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children: const [
-        _StatItem(label: '训练', value: '4 次'),
-        _StatItem(label: '时长', value: '3.2 h'),
-        _StatItem(label: '消耗', value: '1200 kcal'),
-      ],
-    );
-  }
-}
-
-class _StatItem extends StatelessWidget {
-  final String label;
-  final String value;
-
-  const _StatItem({required this.label, required this.value});
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Text(
-          value,
-          style: const TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        const SizedBox(height: 4),
-        Text(label, style: const TextStyle(color: Colors.grey)),
-      ],
     );
   }
 }

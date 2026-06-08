@@ -1,20 +1,22 @@
+import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:fitform/services/user_service.dart'; // 改成你的路径
 
 class EditProfilePage extends StatefulWidget {
-  final String avatarUrl;
-  final String nickname;
-  final String bio;
-  final String gender;
+  final String? avatarUrl;
+  final String? nickname;
+  final String? bio;
+  final String? gender;
 
   const EditProfilePage({
     super.key,
-    required this.avatarUrl,
-    required this.nickname,
-    required this.bio,
-    required this.gender,
+    this.avatarUrl,
+    this.nickname,
+    this.bio,
+    this.gender,
   });
 
   @override
@@ -27,15 +29,19 @@ class _EditProfilePageState extends State<EditProfilePage> {
   late String _gender;
   late String _avatarUrl;
 
+  bool _uploading = false;
+  bool _saving = false;
+
   @override
   void initState() {
     super.initState();
     _nameController = TextEditingController(text: widget.nickname);
     _bioController = TextEditingController(text: widget.bio);
-    _gender = widget.gender;
-    _avatarUrl = widget.avatarUrl;
+    _gender = widget.gender ?? '男';
+    _avatarUrl = widget.avatarUrl ?? '';
   }
 
+  /// ✅ 选择图片（不上传）
   Future<void> _pickImage() async {
     final picker = ImagePicker();
     final file = await picker.pickImage(source: ImageSource.gallery);
@@ -46,28 +52,73 @@ class _EditProfilePageState extends State<EditProfilePage> {
     }
   }
 
-  void _save() {
-    Navigator.pop(context, {
-      'avatar': _avatarUrl,
-      'nickname': _nameController.text,
-      'bio': _bioController.text,
-      'gender': _gender,
-    });
+  /// ✅ 上传头像
+  Future<void> _uploadAvatar() async {
+    final picker = ImagePicker();
+    final file = await picker.pickImage(source: ImageSource.gallery);
+    if (file == null) return;
+
+    setState(() => _uploading = true);
+
+    try {
+      final url = await UserService.uploadAvatar(File(file.path));
+      setState(() {
+        _avatarUrl = url;
+      });
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('上传失败：$e')),
+      );
+    } finally {
+      setState(() => _uploading = false);
+    }
+  }
+
+  /// ✅ 保存用户信息
+  Future<void> _save() async {
+    print('🧪 save start');
+    setState(() => _saving = true);
+
+    try {
+      await UserService.updateProfile(
+        nickname: _nameController.text.trim(),
+        bio: _bioController.text.trim(),
+        gender: _gender,
+        avatar: _avatarUrl,
+      );
+      print('🧪 save success');
+
+      if (!mounted) return;
+      Navigator.pop(context, true);
+    } catch (e) {
+      print('❌ save failed: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('保存失败：$e')),
+      );
+    } finally {
+      setState(() => _saving = false);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-
     final size = MediaQuery.of(context).size;
-    final diagonal = sqrt(size.width * size.width + size.height * size.height);
+    final diagonal =
+        sqrt(size.width * size.width + size.height * size.height);
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('编辑资料'),
         actions: [
           TextButton(
-            onPressed: _save,
-            child: Text('保存', style: TextStyle(color: Colors.green, fontSize: diagonal * 0.02)),
+            onPressed: _saving ? null : _save,
+            child: Text(
+              '保存',
+              style: TextStyle(
+                color: Colors.green,
+                fontSize: diagonal * 0.02,
+              ),
+            ),
           )
         ],
       ),
@@ -75,55 +126,54 @@ class _EditProfilePageState extends State<EditProfilePage> {
         padding: const EdgeInsets.all(16),
         children: [
           Center(
-            child: GestureDetector(
-              onTap: _pickImage,
-              child: CircleAvatar(
-                radius: 48,
-                backgroundImage: _avatarUrl.startsWith('http')
-                    ? NetworkImage(_avatarUrl)
-                    : AssetImage(_avatarUrl),
-              ),
+            child: Column(
+              children: [
+                GestureDetector(
+                  onTap: _pickImage,
+                  child: CircleAvatar(
+                    radius: 48,
+                    backgroundImage: _avatarUrl.startsWith('http')
+                        ? NetworkImage(_avatarUrl)
+                        : FileImage(File(_avatarUrl)),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                ElevatedButton.icon(
+                  onPressed: _uploading ? null : _uploadAvatar,
+                  icon: const Icon(Icons.upload),
+                  label: Text(_uploading ? '上传中...' : '上传头像'),
+                ),
+              ],
             ),
           ),
+
           const SizedBox(height: 30),
+
           TextField(
             controller: _nameController,
-            style: TextStyle(
-              fontSize: diagonal * 0.02,
-              fontWeight: FontWeight.w700,
-            ),
             maxLength: 12,
-            decoration: InputDecoration(
-              labelText: '昵称',
-              labelStyle: TextStyle(fontSize: diagonal * 0.025),
-            ),
+            decoration: const InputDecoration(labelText: '昵称'),
           ),
+
           const SizedBox(height: 20),
+
           DropdownButtonFormField<String>(
-            initialValue: _gender,
-            items: [
-              DropdownMenuItem(value: '男', child: Text('男', style: TextStyle(fontSize: diagonal * 0.01))),
-              DropdownMenuItem(value: '女', child: Text('女', style: TextStyle(fontSize: diagonal * 0.01))),
+            value: _gender,
+            items: const [
+              DropdownMenuItem(value: '男', child: Text('男')),
+              DropdownMenuItem(value: '女', child: Text('女')),
             ],
             onChanged: (v) => setState(() => _gender = v!),
-            decoration: InputDecoration(
-              labelText: '性别',
-              labelStyle: TextStyle(fontSize: diagonal * 0.025),
-            ),
+            decoration: const InputDecoration(labelText: '性别'),
           ),
+
           const SizedBox(height: 20),
+
           TextField(
             controller: _bioController,
-            style: TextStyle(
-              fontSize: diagonal * 0.015,
-              fontWeight: FontWeight.w700,
-            ),
-            maxLines: 3,
             maxLength: 100,
-            decoration: InputDecoration(
-              labelText: '个人简介',
-              labelStyle: TextStyle(fontSize: diagonal * 0.025),
-            ),
+            maxLines: 3,
+            decoration: const InputDecoration(labelText: '个人简介'),
           ),
         ],
       ),
