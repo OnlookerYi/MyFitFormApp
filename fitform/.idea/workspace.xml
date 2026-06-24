@@ -5,94 +5,64 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c0c2845e-7ef1-4acb-8420-33c2d28cf9a5" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.flutter-plugins-dependencies" beforeDir="false" afterPath="$PROJECT_DIR$/.flutter-plugins-dependencies" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/.kotlin/errors/errors-1778986607358.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/.kotlin/errors/errors-1778986607371.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/.kotlin/errors/errors-1778995699760.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/.kotlin/errors/errors-1778995699778.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/.kotlin/errors/errors-1779012589048.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/.kotlin/errors/errors-1779012589059.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/.kotlin/errors/errors-1779014531012.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/.kotlin/errors/errors-1779017036644.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/.kotlin/errors/errors-1779017036662.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/.kotlin/errors/errors-1779017036670.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/.kotlin/errors/errors-1779021822787.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/.kotlin/errors/errors-1779021822826.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/.kotlin/errors/errors-1779021822844.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/.kotlin/errors/errors-1779022778784.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/.kotlin/errors/errors-1779022778822.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/.kotlin/errors/errors-1779022778841.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/.kotlin/errors/errors-1779023058400.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/.kotlin/errors/errors-1779023058416.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/.kotlin/errors/errors-1779023058425.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/.kotlin/errors/errors-1779023533700.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/.kotlin/errors/errors-1779023533722.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/.kotlin/errors/errors-1779023533740.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/.kotlin/errors/errors-1779024070735.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/.kotlin/errors/errors-1779024070755.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/.kotlin/errors/errors-1779024070772.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/.kotlin/errors/errors-1779071111320.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/.kotlin/errors/errors-1779071111370.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/.kotlin/errors/errors-1779071111411.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/.kotlin/errors/errors-1779273975310.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/.kotlin/errors/errors-1779283772723.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/.kotlin/errors/errors-1779283772730.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/.kotlin/errors/errors-1779283772737.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/.kotlin/errors/errors-1779283772740.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/.kotlin/errors/errors-1779285320000.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/.kotlin/errors/errors-1779285320012.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/.kotlin/errors/errors-1779285320022.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/.kotlin/errors/errors-1779285320027.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/app/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/build.gradle.kts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/src/main/kotlin/com/example/fitform2/MainActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/src/main/kotlin/com/example/fitform2/MainActivity.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/assets/text/quotes.txt" beforeDir="false" afterPath="$PROJECT_DIR$/assets/text/quotes.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/mocks/mock_analysis.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/mocks/mock_analysis.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/mocks/mock_comments.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/mocks/mock_comments.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/mocks/mock_posts.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/mocks/mock_posts.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/mocks/mock_user.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/mocks/mock_user.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/mocks/mocks.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/mocks/mocks.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/models/analysis_history_item.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/models/analysis_history_item.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/models/comment.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/models/comment.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/models/post.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/models/post.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/models/user.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/models/user.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/models/video_source.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/models/video_source.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/models/workout_analysis.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/models/workout_analysis.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/pages/analysis/action_select_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/pages/analysis/action_select_page.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/pages/analysis/analysis_card.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/pages/analysis/analysis_card.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/pages/analysis/analysis_center_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/pages/analysis/analysis_center_page.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/pages/analysis/analysis_guidelines_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/pages/analysis/analysis_guidelines_page.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/pages/analysis/analysis_history_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/pages/analysis/analysis_history_page.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/pages/analysis/dual_video_compare_page.dart" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/pages/analysis/real_time_camera_page.dart" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/pages/analysis/analysis_report_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/pages/analysis/analysis_report_page.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/pages/analysis/real_time_analysis_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/pages/analysis/real_time_analysis_page.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/pages/analysis/single_video_analysis_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/pages/analysis/single_video_analysis_page.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/pages/analysis/skeleton_overlay.dart" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/pages/auth/login_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/pages/auth/login_page.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/pages/auth/register_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/pages/auth/register_page.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/pages/community/community_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/pages/community/community_page.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/pages/community/image_preview_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/pages/community/image_preview_page.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/pages/community/other_user_profile_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/pages/community/other_user_profile_page.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/pages/community/post_card.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/pages/community/post_card.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/pages/community/post_detail_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/pages/community/post_detail_page.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/pages/community/publish_post_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/pages/community/publish_post_page.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/pages/main/home_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/pages/main/home_page.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/pages/main/main_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/pages/main/main_page.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/pages/main/splash_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/pages/main/splash_page.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/pages/profile/about_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/pages/profile/about_page.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/pages/profile/edit_profile_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/pages/profile/edit_profile_page.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/pages/profile/profile_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/pages/profile/profile_page.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/services/analysis_sercvice.dart" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/services/auth_service.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/services/auth_service.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/services/collect_service.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/services/collect_service.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/services/comment_service.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/services/comment_service.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/services/follow_service.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/services/follow_service.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/services/history_service.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/services/history_service.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/services/home_status_service.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/services/home_status_service.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/services/like_service.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/services/like_service.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/services/mediapipe_api.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/services/mediapipe_api.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/services/post_service.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/services/post_service.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/services/quote_service.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/services/quote_service.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/services/upload_service.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/services/upload_service.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/services/user_service.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/services/user_service.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/utils/app_colors.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/utils/app_colors.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/utils/video_picker.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/utils/video_picker.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/viewmodels/single_video_analysis_viewmodel.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/viewmodels/single_video_analysis_viewmodel.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/widgets/analysis/analysis_info_panel.dart" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/widgets/analysis/compare_score_panel.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/widgets/analysis/compare_score_panel.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/widgets/analysis/video_control_bar.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/widgets/analysis/video_control_bar.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/widgets/analysis/video_player.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/widgets/analysis/video_player.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/widgets/analysis/video_progress_bar.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/widgets/analysis/video_progress_bar.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/widgets/common_image.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/widgets/common_image.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/macos/Flutter/GeneratedPluginRegistrant.swift" beforeDir="false" afterPath="$PROJECT_DIR$/macos/Flutter/GeneratedPluginRegistrant.swift" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pubspec.lock" beforeDir="false" afterPath="$PROJECT_DIR$/pubspec.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/pubspec.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/windows/flutter/generated_plugin_registrant.cc" beforeDir="false" afterPath="$PROJECT_DIR$/windows/flutter/generated_plugin_registrant.cc" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/windows/flutter/generated_plugins.cmake" beforeDir="false" afterPath="$PROJECT_DIR$/windows/flutter/generated_plugins.cmake" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/widget_test.dart" beforeDir="false" afterPath="$PROJECT_DIR$/test/widget_test.dart" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -134,20 +104,20 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.cidr.known.project.marker": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "RunOnceActivity.readMode.enableVisualFormatting": "true",
-    "cf.first.check.clang-format": "false",
-    "cidr.known.project.marker": "true",
-    "git-widget-placeholder": "main",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "D:/CS/VSCODE/GitHub/MyFitFormApp/fitform"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.readMode.enableVisualFormatting&quot;: &quot;true&quot;,
+    &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
+    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;D:/CS/VSCODE/GitHub/MyFitFormApp/fitform&quot;
   }
-}]]></component>
+}</component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
       <changelist id="c0c2845e-7ef1-4acb-8420-33c2d28cf9a5" name="Changes" comment="" />

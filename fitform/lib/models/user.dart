@@ -5,6 +5,7 @@ class User {
   final String? avatar;
   final String? bio;
   final String? gender;
+  final bool banned;
 
   final int points;
   final int workouts;
@@ -25,6 +26,7 @@ class User {
     this.avatar,
     this.bio,
     this.gender,
+    this.banned = false,
     this.points = 0,
     this.workouts = 0,
     this.streak = 0,
@@ -59,6 +61,7 @@ class User {
       avatar: json['avatar'],
       bio: json['bio'],
       gender: json['gender'],
+      banned: json['banned'] == 1 || json['banned'] == true,
       points: json['points'] ?? 0,
       workouts: json['workouts'] ?? 0,
       streak: json['streak'] ?? 0,

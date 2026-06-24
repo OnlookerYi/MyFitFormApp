@@ -18,7 +18,6 @@ enum ExerciseType {
   bend,
 }
 
-
 class RealTimeAnalysisPage extends StatefulWidget {
   const RealTimeAnalysisPage({super.key});
 
@@ -50,10 +49,11 @@ class _RealTimeAnalysisPageState extends State<RealTimeAnalysisPage> {
 
   String _phase = 'up';
 
-  /// 用于平滑角度
   final Map<String, List<double>> _buffer = {};
 
   Size _imageSize = Size.zero;
+
+  DateTime? _lastTime;
 
   @override
   void initState() {
@@ -64,8 +64,14 @@ class _RealTimeAnalysisPageState extends State<RealTimeAnalysisPage> {
   Future<void> _init() async {
     if (!(await Permission.camera.request()).isGranted) return;
 
-    _detector = NpuPoseDetector(config: PoseDetectorConfig.realtime());
-    await _detector!.initialize();
+    try {
+      _detector = NpuPoseDetector(config: PoseDetectorConfig.realtime());
+      await _detector!.initialize();
+    } catch (e) {
+      debugPrint('PoseDetector init failed: $e');
+      _detector = null;
+      return;
+    }
 
     final cameras = await availableCameras();
     final front = cameras.firstWhere(
@@ -87,46 +93,63 @@ class _RealTimeAnalysisPageState extends State<RealTimeAnalysisPage> {
     _controller!.startImageStream(_onFrame);
   }
 
-  void _onFrame(CameraImage image) async {
-    final bytes = _yuv420ToNv21(image);
-    final result = await _detector!.detectPose(bytes);
+  void _onFrame(CameraImage image) {
+    final now = DateTime.now();
+    if (_lastTime != null &&
+        now.difference(_lastTime!) < const Duration(milliseconds: 100)) {
+      return;
+    }
+    _lastTime = now;
 
-    if (!result.hasPoses) return;
-
-    final lm = result.poses.first.landmarks
-        .map(_mirrorFrontCamera)
-        .toList();
-
-    _imageSize = Size(
-      image.width.toDouble(),
-      image.height.toDouble(),
-    );
-
-    final kl = _smooth('kl', _angle(lm[23], lm[25], lm[27]));
-    final kr = _smooth('kr', _angle(lm[24], lm[26], lm[28]));
-    final hip = _smooth('hip', _angle(lm[11], lm[23], lm[25]));
-    final spine = _smooth('spine', _angle(lm[11], lm[23], lm[27]));
-    final elbow = _smooth(
-      'elbow',
-      _angle(lm[11], lm[13], lm[15]),
-    );
-
-    final ex = _detect(kl, kr, hip, spine, elbow);
-
-    setState(() {
-      _landmarks = lm;
-      _kneeL = kl;
-      _kneeR = kr;
-      _hip = hip;
-      _spine = spine;
-      _elbow = elbow;
-      _exercise = ex;
-      _quality = _evaluate(ex);
-      _countReps(ex, kl, kr, elbow, spine);
-    });
+    _process(image);
   }
 
-  /// ✅ 前置摄像头正确镜像
+  Future<void> _process(CameraImage image) async {
+    if (_detector == null) return;
+
+    try {
+      final bytes = _yuv420ToNv21(image);
+      final result = await _detector!.detectPose(bytes);
+
+      if (!result.hasPoses) return;
+      if (!mounted) return;
+
+      final lm = result.poses.first.landmarks
+          .map(_mirrorFrontCamera)
+          .toList();
+
+      _imageSize = Size(
+        image.width.toDouble(),
+        image.height.toDouble(),
+      );
+
+      final kl = _smooth('kl', _angle(lm[23], lm[25], lm[27]));
+      final kr = _smooth('kr', _angle(lm[24], lm[26], lm[28]));
+      final hip = _smooth('hip', _angle(lm[11], lm[23], lm[25]));
+      final spine = _smooth('spine', _angle(lm[11], lm[23], lm[27]));
+      final elbow = _smooth(
+        'elbow',
+        _angle(lm[11], lm[13], lm[15]),
+      );
+
+      final ex = _detect(kl, kr, hip, spine, elbow);
+
+      setState(() {
+        _landmarks = lm;
+        _kneeL = kl;
+        _kneeR = kr;
+        _hip = hip;
+        _spine = spine;
+        _elbow = elbow;
+        _exercise = ex;
+        _quality = _evaluate(ex);
+        _countReps(ex, kl, kr, elbow, spine);
+      });
+    } catch (e) {
+      debugPrint('detectPose error: $e');
+    }
+  }
+
   PoseLandmark _mirrorFrontCamera(PoseLandmark l) => PoseLandmark(
         type: l.type,
         x: 1 - l.x,
@@ -142,9 +165,17 @@ class _RealTimeAnalysisPageState extends State<RealTimeAnalysisPage> {
     return _buffer[key]!.reduce((a, b) => a + b) / _buffer[key]!.length;
   }
 
-  ExerciseType _detect(double kl, double kr, double hip, double spine, double elbow) {
+  ExerciseType _detect(
+    double kl,
+    double kr,
+    double hip,
+    double spine,
+    double elbow,
+  ) {
     if (kl < 95 && kr < 95 && hip < 100) return ExerciseType.squat;
-    if ((kl < 95 && kr > 140) || (kr < 95 && kl > 140)) return ExerciseType.lunge;
+    if ((kl < 95 && kr > 140) || (kr < 95 && kl > 140)) {
+      return ExerciseType.lunge;
+    }
     if (elbow < 90 && hip < 100) return ExerciseType.pushUp;
     if (spine < 55) return ExerciseType.crunch;
     if (spine > 150 && kl > 160) return ExerciseType.plank;
@@ -227,9 +258,10 @@ class _RealTimeAnalysisPageState extends State<RealTimeAnalysisPage> {
     final nv21 = Uint8List(y.length + u.length + v.length);
     nv21.setRange(0, y.length, y);
 
+    int offset = y.length;
     for (int i = 0; i < u.length; i++) {
-      nv21[y.length + i * 2] = v[i];
-      nv21[y.length + i * 2 + 1] = u[i];
+      nv21[offset++] = v[i];
+      nv21[offset++] = u[i];
     }
     return nv21;
   }
@@ -263,7 +295,7 @@ class _RealTimeAnalysisPageState extends State<RealTimeAnalysisPage> {
                 _landmarks,
                 _imageSize,
                 c.biggest,
-              )
+              ),
             ),
           ),
           Positioned(
@@ -286,7 +318,8 @@ class _RealTimeAnalysisPageState extends State<RealTimeAnalysisPage> {
                 Text('脊柱: ${_spine.toStringAsFixed(1)}°', style: sub()),
                 Text('肘: ${_elbow.toStringAsFixed(1)}°', style: sub()),
                 Text(
-                  'Squat:$_squatReps  Lunge:$_lungeReps  Crunch:$_crunchReps  PushUp:$_pushUpReps',
+                  'Squat:$_squatReps  Lunge:$_lungeReps  '
+                  'Crunch:$_crunchReps  PushUp:$_pushUpReps',
                   style: sub(),
                 ),
                 Text(_quality, style: sub()),
@@ -298,11 +331,8 @@ class _RealTimeAnalysisPageState extends State<RealTimeAnalysisPage> {
     );
   }
 
-  TextStyle sub() =>
-      const TextStyle(color: Colors.white70, fontSize: 13);
+  TextStyle sub() => const TextStyle(color: Colors.white70, fontSize: 13);
 }
-
-
 
 class PosePainter extends CustomPainter {
   final List<PoseLandmark> landmarks;
@@ -314,8 +344,10 @@ class PosePainter extends CustomPainter {
   Offset _toScreen(PoseLandmark l) {
     final scaleX = canvasSize.width / imageSize.width;
     final scaleY = canvasSize.height / imageSize.height;
-    return Offset(l.x * imageSize.width * scaleX,
-        l.y * imageSize.height * scaleY);
+    return Offset(
+      l.x * imageSize.width * scaleX,
+      l.y * imageSize.height * scaleY,
+    );
   }
 
   @override

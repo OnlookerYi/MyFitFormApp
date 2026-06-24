@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import '../main/main_page.dart';
 import 'register_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:fitform/pages/admin/admin_console_page.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -40,8 +41,20 @@ class _LoginPageState extends State<LoginPage> {
       if (!mounted) return;
 
       if (result["code"] == 200) {
-        final userId = result["data"]["id"];
+        final user = result["data"];
+        final banned = user["banned"] == true || user["banned"] == 1; 
 
+        if (banned) {
+          if (!mounted) return;
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('该账号已被封禁，无法登录'),
+            ),
+          );
+          setState(() => isLoading = false);
+          return; // ❌ 不进入主页
+        }
+        final userId = user["id"];
         final prefs = await SharedPreferences.getInstance();
         await prefs.setInt('userId', userId);
 
@@ -65,6 +78,58 @@ class _LoginPageState extends State<LoginPage> {
     } finally {
       if (mounted) setState(() => isLoading = false);
     }
+  }
+
+  Future<bool> _showAdminLoginDialog(BuildContext context) async {
+    final adminUserCtrl = TextEditingController();
+    final adminPassCtrl = TextEditingController();
+
+    return await showDialog<bool>(
+          context: context,
+          barrierDismissible: false,
+          builder: (_) => AlertDialog(
+            title: const Text('管理员登录'),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: adminUserCtrl,
+                  decoration: const InputDecoration(
+                    labelText: '管理员账号',
+                  ),
+                ),
+                const SizedBox(height: 12),
+                TextField(
+                  controller: adminPassCtrl,
+                  obscureText: true,
+                  decoration: const InputDecoration(
+                    labelText: '管理员密码',
+                  ),
+                ),
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context, false),
+                child: const Text('取消'),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  final user = adminUserCtrl.text.trim();
+                  final pass = adminPassCtrl.text;
+
+                  if (user == 'admin' && pass == 'admin123') {
+                    Navigator.pop(context, true);
+                  } else {
+                    Navigator.pop(context, false);
+                  }
+                },
+                child: const Text('登录'),
+              ),
+            ],
+          ),
+        ) ??
+        false;
   }
 
   @override
@@ -135,6 +200,34 @@ class _LoginPageState extends State<LoginPage> {
                     child: const Text('去注册'),
                   ),
                 ],
+              ),
+              const SizedBox(height: 12),
+
+              Center(
+                child: TextButton(
+                  onPressed: () async {
+                    final ok = await _showAdminLoginDialog(context);
+                    if (ok && context.mounted) {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => const AdminPage(),
+                        ),
+                      );
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('管理员账号或密码错误')),
+                      );
+                    }
+                  },
+                  child: Text(
+                    '管理员入口',
+                    style: TextStyle(
+                      fontWeight: FontWeight.w700,
+                      fontSize: 15,
+                      color: Colors.redAccent,
+                    ),
+                  ),
+                ),
               ),
             ],
           ),
